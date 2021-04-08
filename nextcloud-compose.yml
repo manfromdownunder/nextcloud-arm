@@ -1,20 +1,24 @@
-version: '3.1'
+Version: '3.1'
 
 services:
 
-  postgres:
-    image: postgres:latest
-    container_name: nextcloud-postgres
+  mariadb:
+    image: linuxserver/mariadb:arm32v6-latest
+    container_name: nextcloud-mariadb
     networks:
       - nextcloud_network
+    ports:
+      - 5432:5432
     volumes:
-      - /data/nextcloud/mysql:/var/lib/mysql
+      - /mnt/data/nextcloud/mysql:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=P@ssw0rd123
-      - POSTGRES_DB=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=P@ssw0rd123
+      - MYSQL_ROOT_PASSWORD=P@ssw0rd123
+      - MYSQL_DATABASE=nextcloud
     restart: unless-stopped
+    hostname: nextcloud-mariadb
 
   nextcloud-app:
     image: nextcloud:latest
@@ -24,25 +28,26 @@ services:
     networks:
       - nextcloud_network
     depends_on:
-      - postgres
+      - mariadb
     volumes:
-      - /data/nextcloud/app/html:/var/www/html
-      - /data/nextcloud/app/config:/var/www/html/config
-      - /data/nextcloud/app/custom_apps:/var/www/html/custom_apps
-      - /data/nextcloud/app/data:/var/www/html/data:rw
-      - /data/nextcloud/app/themes:/var/www/html/themes
-      - /media/pi/data:/data/nextcloud:rw
+      - /mnt/data/nextcloud/app/html:/var/www/html
+      - /mnt/data/nextcloud/app/config:/var/www/html/config
+      - /mnt/data/nextcloud/app/custom_apps:/var/www/html/custom_apps
+      - /mnt/data/nextcloud/app/data:/var/www/html/data:rw
+      - /mct/data/nextcloud/app/themes:/var/www/html/themes
+      - /mnt/data/nextcloud:/data/nextcloud:rw
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - OVERWRITEHOST=192.168.1.1
+      - OVERWRITEHOST=192.168.1.10
       - APACHE_DISABLE_REWRITE_IP=1
       - NEXTCLOUD_DATA_DIR=/data/nextcloud
-      - POSTGRES_USER=nextcloud      
-      - POSTGRES_PASSWORD=P@ssw0rd123
-      - POSTGRES_DB=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=P@ssw0rd123
+      - MYSQL_DATABASE=nextcloud
       - NEXTCLOUD_ADMIN_USER=admin
       - NEXTCLOUD_ADMIN_PASSWORD=P@ssw0rd123
-      - NEXTCLOUD_TRUSTED_DOMAINS=192.168.1.1
+      - NEXTCLOUD_TRUSTED_DOMAINS=192.168.1.10
+      - MYSQL_HOST=nextcloud-mariadb
     restart: unless-stopped
 
 networks:
