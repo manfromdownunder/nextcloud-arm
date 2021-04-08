@@ -1,6 +1,5 @@
 # nextcloud-arm
-Nextcloud using postgres
-
+Nextcloud using MariaDB
 
 Mount USB Hardrive
 sudo mkdir /mnt/data
