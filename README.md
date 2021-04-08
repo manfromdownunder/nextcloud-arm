@@ -2,5 +2,11 @@
 Nextcloud using postgres
 
 
-Run chown -R www-data:www-data nextcloud on your data folder before running setup at http://x.x.x.x
+Mount USB Hardrive
+sudo mkdir /mnt/data
+sudo mount /dev/sda1 /mnt/data
 
+Create Nextcloud data folder and set permissions
+sudo mkdir /mnt/data/nextcloud
+sudo chown -R www-data:www-data /mnt/data
+sudo chown -R www-data:www-data /mnt/data/nextcloud
